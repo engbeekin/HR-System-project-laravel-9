@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\CountryController;
+use App\Http\Controllers\EmployeController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -16,12 +18,9 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
-Route::view('/employe', 'employe.index');
 
+Route::resource('/employee', EmployeController::class);
+Route::resource('/country', CountryController::class);
+Route::get('/employee/delete/{id}', [EmployeController::class, 'destroy']);
 
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth'])->name('dashboard');
-Route::middleware('auth')->group(function () {
-});
-require __DIR__ . '/auth.php';
+require __DIR__.'/auth.php';
