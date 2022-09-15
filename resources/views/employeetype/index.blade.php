@@ -11,12 +11,12 @@
             <div class="py-3 card-header">
                 <div class="row">
                     <div class="col-10">
-                        <h2 class=" font-weight-bold font-size-5 text-dark">Country List</h2>
+                        <h2 class=" font-weight-bold font-size-5 text-dark">Employe Type List</h2>
 
                     </div>
                     <div class="col-2">
-                        <a href="{{ route('country.create') }}" type="button" class="btn btn-lg btn-primary ">
-                            Add New Country
+                        <a href="{{ route('employee_type.create') }}" type="button" class="btn btn-lg btn-primary ">
+                            Add New Employe Type
                         </a>
                     </div>
                 </div>
@@ -31,10 +31,10 @@
                             <tr>
                                 <th scope="col">#</th>
                                 <th scope="col">
-                                    <h5>Country Name</h5>
+                                    <h5>employe Type Name</h5>
                                 </th>
 
-                               
+
                                 <th  class="not-export">
                                     <h5>Actions</h5>
                                 </th>
@@ -44,26 +44,26 @@
                         <tfoot>
                             <tr>
                                 <th scope="col">#</th>
-                                <th scope="col">Country Name</th>
-                               
+                                <th scope="col">employe Type Name</th>
+
                                 <th scope="col" class=" not-export">Actions</th>
 
                             </tr>
                         </tfoot>
                         <tbody>
-                            @foreach ($countries as $country)
+                            @foreach ($employeeTypies as $employeType)
                                 <tr>
                                     <td> {{ $loop->iteration }}</td>
-                                    <td> {{ $country->name ?? ' ' }}</td>
+                                    <td> {{ $employeType->name ?? ' ' }}</td>
 
 
-                                    
+
                                     <td class="">
                                         <div class="ml-5 d-flex">
 
-                                            <a href="{{ route('country.edit', $country) }}" type="button"
+                                            <a href="{{ route('employee_type.edit', $employeType) }}" type="button"
                                                 class="btn btn-circle btn-success"><i class="fas fa-edit"></i></a>
-                                            <form action="{{ route('country.destroy', $country->id) }}" method="post">
+                                            <form action="{{ route('employee_type.destroy', $employeType->id) }}" method="post">
                                                 @csrf
                                                 @method('Delete')
                                                 <button type="submit" class="btn btn-circle btn-danger"><i

@@ -21,7 +21,7 @@
     <link href="{{ asset('admin/css/sb-admin-2.min.css') }}" rel="stylesheet">
     {{-- datatable css --}}
     <link href="//cdn.datatables.net/1.11.3/css/jquery.dataTables.min.css" rel="stylesheet">
-    
+
 </head>
 
 <body id="page-top">
@@ -85,6 +85,36 @@
                         <h6 class="collapse-header">Countries</h6>
                         <a class="collapse-item" href="/country">All Countries</a>
                         <a class="collapse-item" href="/country/create">Create Country</a>
+                    </div>
+                </div>
+            </li>
+             {{-- departments --}}
+            <li class="nav-item">
+                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsetwo"
+                    aria-expanded="true" aria-controls="collapsetwo">
+                    <i class="fas fa-fw fa-cog"></i>
+                    <span>Departments</span>
+                </a>
+                <div id="collapsetwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+                    <div class="py-2 bg-white rounded collapse-inner">
+                        <h6 class="collapse-header">Departments</h6>
+                        <a class="collapse-item" href="/department">All Departments</a>
+                        <a class="collapse-item" href="/department/create">Create Department</a>
+                    </div>
+                </div>
+            </li>
+             {{-- employee type --}}
+            <li class="nav-item">
+                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsethree"
+                    aria-expanded="true" aria-controls="collapsetwo">
+                    <i class="fas fa-fw fa-cog"></i>
+                    <span>Employe Typies</span>
+                </a>
+                <div id="collapsethree" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+                    <div class="py-2 bg-white rounded collapse-inner">
+                        <h6 class="collapse-header">Employe Typies</h6>
+                        <a class="collapse-item" href="/employee_type">All Employe Typies</a>
+                        <a class="collapse-item" href="/employee_type/create">Create Employe Type</a>
                     </div>
                 </div>
             </li>

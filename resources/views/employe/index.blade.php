@@ -41,12 +41,9 @@
                                         <?php endforeach; ?>
                                     </select>
 
-                                    <label for="">from </label>
-                                    <input type="text" class="form-control" name="from" id="from" value="">
 
-                                    <label for="">Filter by Holiday </label>
-                                    <input type="month" class="form-control" name="holiday_year" id="holiday_year"
-                                        value="">
+
+
                                 </div>
                                 <div class="col-4" style="color: black">
 
@@ -66,8 +63,7 @@
                                         <option value="<?php echo $year; ?>"><?php echo $year; ?></option>
                                         <?php endforeach; ?>
                                     </select>
-                                    <label for="">To </label>
-                                    <input type="text" class="form-control" name="to" id="to" value="">
+
 
                                 </div>
                                 <div class="col-4">
@@ -78,11 +74,10 @@
                                             <option value="{{ $empType->id }}">{{ $empType->name }}</option>
                                         @endforeach
                                     </select>
+                                    <label for="">Filter by Holiday </label>
+                                    <input type="month" class="form-control" name="holiday_year" id="holiday_year"
+                                        value="">
 
-                                    <label for="">Filter By Employe Salary </label>
-                                    <input type="text" class="form-control" name="salary" id="salary" value="">
-
-                                    <button id="filter_by_salary" class="mt-5 btn btn-success">Filter by Salary</button>
                                 </div>
 
                                 <div class="col-12">
@@ -150,7 +145,7 @@
                                 <th scope="col">Holidy in year</th>
                                 <th scope="col">Salary</th>
 
-                                <th scope="col">image</th>
+
                                 <th scope="col" class="text-center not-export">Actions</th>
 
                             </tr>
@@ -221,31 +216,133 @@
     </div>
 @endsection
 @section('script')
+
     <script>
-        $(document).ready(function() {
+
+          $(document).ready(function() {
 
 
             //  filtering by deparament
             $('#department').on('change', function() {
-                var department = $("#department").val();
+               getEmploye();
+            });
 
-                $.ajax({
+            //  filtering by country
+
+            $('#country_filter').on('change', function () {
+                    getEmploye();
+            });
+            $('#empType').on('change', function () {
+                    getEmploye();
+            });
+
+             $('#join_date').on('change', function () {
+                    getEmploye();
+            });
+
+             $('#dob').on('change', function () {
+                    getEmploye();
+            });
+            $('#salary').on('keyup', function () {
+                    getEmploye();
+            });
+
+            $('#holiday_year').on('keyup', function () {
+                    getEmploye();
+            });
+
+            $('#from,#to').on('keyup', function () {
+                    getEmploye();
+            });
+            // datatable
+            $('#dataTable').DataTable({
+                // dom: 'Bfrtip',
+                dom: "Blfrtip",
+                select: true,
+
+                buttons: [{
+                        extend: 'pdfHtml5',
+                        text: '<button  class="px-3 btn btn-primary w-100 "><i class="mr-1 fa fa-file-pdf "></i> PDF</button>',
+
+                        title: 'All Employee List',
+                        exportOptions: {
+                            columns: ':visible:not(.not-export)',
+                             rows : {country_filter:'applied'}
+                        }
+
+                    },
+                    {
+                        text: '<button  class="px-3 btn btn-primary w-100 "><i class="mr-1 fa fa-copy"></i> Copy</button>',
+                        extend: 'copyHtml5',
+                        title: 'All Employee List',
+                        exportOptions: {
+                            columns: ':visible:not(.not-export)'
+                        }
+                    },
+                    {
+                        text: '<button  class="px-3 btn btn-primary w-100 "><i class="mr-1 fa fa-file-excel"></i> Excel</button>',
+                        extend: 'excelHtml5',
+                        title: 'All Employee List',
+                        exportOptions: {
+                            columns: ':visible:not(.not-export)'
+                        }
+                    },
+                    {
+                        extend: 'print',
+                        text: '<button  class="px-3 btn btn-primary w-100 "><i class="mr-1 fa fa-print"></i> Print</button>',
+
+                        pageSize: 'A4',
+                        title: 'All Employee List',
+                        exportOptions: {
+                            columns: ':visible:not(.not-export)'
+                        },
+
+                    },
+                ]
+
+
+            });
+
+
+        });
+
+        // get employee filtered data
+        function getEmploye(){
+            var country=$('#country_filter').val();
+            var department=$('#department').val();
+            var empType=$('#empType').val();
+            var join_date=$('#join_date').val();
+            var dob=$('#dob').val();
+            var salary=$('#salary').val();
+            var holiday_year=$('#holiday_year').val();
+            var from=$('#from').val();
+            var to=$('#to').val();
+
+
+            $.ajax({
                     type: "GET",
                     url: "{{ route('employee.index') }}",
                     data: {
-
+                        'country': country,
                         'department': department,
+                        'empType': empType,
+                        'join_date': join_date,
+                        'dob': dob,
+                        'salary': salary,
+                        'holiday_year': holiday_year,
+                        'from': from,
+                        'to': to,
                     },
                     // dataType: "dataType",
                     success: function(data) {
                         var employees = data.employees;
-
 
                         var html = '';
                         var tbody = $('#tbody').html('');
                         var i;
                         if (employees.length > 0) {
                             employees.forEach(employe => {
+
 
 
 
@@ -309,625 +406,9 @@
                         $('#tbody').html(html);
                     }
                 });
-            });
+        }
 
 
-            //  filtering by country
-            $('#country_filter').on('change', function() {
-                country = $(this).val();
-                $.ajax({
-                    type: "GET",
-                    url: "{{ route('employee.index') }}",
-                    data: {
-                        'country': country,
-                    },
-                    // dataType: "dataType",
-                    success: function(data) {
-                        var employees = data.employees;
-
-                        var html = '';
-                        if (employees.length > 0) {
-                            employees.forEach(employe => {
-
-                                html +=
-                                    '<tr>\
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        <td></td>\
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        <td>' +
-                                    employe
-                                    .name +
-                                    '</td>\
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        <td>' +
-                                    employe
-                                    .department
-                                    .name +
-                                    '</td>\
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        <td>' +
-                                    employe
-                                    .country
-                                    .name +
-                                    '</td>\
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        <td>' +
-                                    employe
-                                    .employe_type
-                                    .name +
-                                    '</td>\
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        <td>' +
-                                    employe
-                                    .phone +
-                                    '</td>\
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        <td>' +
-                                    employe
-                                    .dob +
-                                    '</td>\
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        <td>' +
-                                    employe
-                                    .join_date +
-                                    '</td>\
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        <td>' +
-                                    employe
-                                    .holiday_year +
-                                    '</td>\
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        <td>' +
-                                    employe
-                                    .salaray +
-                                    '</td>\
-                                    <td><a type="button" href="/employee/'+employe.id+'/edit" value="' +
-                                employe
-                                .id +
-                                '" class="btn btn-circle btn-success"><i class="fas fa-edit"></i></a> <a type="button" href="/employee/delete/'+employe.id+'" value="' +
-                                employe
-                                .id +
-                                '" class="btn btn-circle btn-danger "><i class="fas fa-trash"></i></a> </td>\
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    </tr> ';
-                            });
-                        } else {
-                            html +=
-                                '<tr>\
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    <td>No Employee Found !</td>\
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    </tr> ';
-                        }
-                        $('#tbody').html(html);
-                    }
-                });
-
-
-            });
-
-            //filtering by employee Type
-            $('#empType').on('change', function() {
-                empType = $(this).val();
-
-                $.ajax({
-                    type: "GET",
-                    url: "{{ route('employee.index') }}",
-                    data: {
-                        'empType': empType,
-                    },
-                    // dataType: "dataType",
-                    success: function(data) {
-                        var employees = data.employees;
-
-                        var html = '';
-                        if (employees.length > 0) {
-                            employees.forEach(employe => {
-
-                                html +=
-                                    '<tr>\
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                <td></td>\
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                <td>' +
-                                    employe
-                                    .name +
-                                    '</td>\
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                <td>' +
-                                    employe
-                                    .department
-                                    .name +
-                                    '</td>\
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                <td>' +
-                                    employe
-                                    .country
-                                    .name +
-                                    '</td>\
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                <td>' +
-                                    employe
-                                    .employe_type
-                                    .name +
-                                    '</td>\
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                <td>' +
-                                    employe
-                                    .phone +
-                                    '</td>\
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                <td>' +
-                                    employe
-                                    .dob +
-                                    '</td>\
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                <td>' +
-                                    employe
-                                    .join_date +
-                                    '</td>\
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                <td>' +
-                                    employe
-                                    .holiday_year +
-                                    '</td>\
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                <td>' +
-                                    employe
-                                    .salaray +
-                                    '</td>\
-                                    <td><a type="button" href="/employee/'+employe.id+'/edit" value="' +
-                                employe
-                                .id +
-                                '" class="btn btn-circle btn-success"><i class="fas fa-edit"></i></a> <a type="button" href="/employee/delete/'+employe.id+'" value="' +
-                                employe
-                                .id +
-                                '" class="btn btn-circle btn-danger "><i class="fas fa-trash"></i></a> </td>\
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            </tr> ';
-                            });
-                        } else {
-                            html +=
-                                '<tr>\
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            <td>No Employee Found !</td>\
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            </tr> ';
-                        }
-                        $('#tbody').html(html);
-                    }
-                });
-
-
-            });
-
-            //  filtering  Joining date  by year
-            $('#join_date').on('change', function() {
-                join_date = $(this).val();
-
-                $.ajax({
-                    type: "GET",
-                    url: "{{ route('employee.index') }}",
-                    data: {
-                        'join_date': join_date,
-                    },
-                    // dataType: "dataType",
-                    success: function(data) {
-                        var employees = data.employees;
-
-                        var html = '';
-                        if (employees.length > 0) {
-                            employees.forEach(employe => {
-
-
-
-                                html +=
-                                    '<tr>\
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        <td></td>\
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        <td>' +
-                                    employe
-                                    .name +
-                                    '</td>\
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        <td>' +
-                                    employe
-                                    .department
-                                    .name +
-                                    '</td>\
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        <td>' +
-                                    employe
-                                    .country
-                                    .name +
-                                    '</td>\
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        <td>' +
-                                    employe
-                                    .employe_type
-                                    .name +
-                                    '</td>\
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        <td>' +
-                                    employe
-                                    .phone +
-                                    '</td>\
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        <td>' +
-                                    employe
-                                    .dob +
-                                    '</td>\
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        <td>' +
-                                    employe
-                                    .join_date +
-                                    '</td>\
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        <td>' +
-                                    employe
-                                    .holiday_year +
-                                    '</td>\
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        <td>' +
-                                    employe
-                                    .salaray +
-                                    '</td>\
-                                    <td><a type="button" href="/employee/'+employe.id+'/edit" value="' +
-                                employe
-                                .id +
-                                '" class="btn btn-circle btn-success"><i class="fas fa-edit"></i></a> <a type="button" href="/employee/delete/'+employe.id+'" value="' +
-                                employe
-                                .id +
-                                '" class="btn btn-circle btn-danger "><i class="fas fa-trash"></i></a> </td>\
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    </tr> ';
-                            });
-                        } else {
-                            html +=
-                                '<tr>\
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    <td>No Employee Found !</td>\
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    </tr> ';
-                        }
-                        $('#tbody').html(html);
-                    }
-                });
-
-
-            });
-
-            //  filtering  dob by year
-            $('#dob').on('change', function() {
-                dob = $(this).val();
-                $.ajax({
-                    type: "GET",
-                    url: "{{ route('employee.index') }}",
-                    data: {
-                        'dob': dob,
-                    },
-                    // dataType: "dataType",
-                    success: function(data) {
-                        var employees = data.employees;
-
-                        var html = '';
-                        if (employees.length > 0) {
-                            employees.forEach(employe => {
-
-                                html +=
-                                    '<tr>\
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        <td></td>\
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        <td>' +
-                                    employe
-                                    .name +
-                                    '</td>\
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        <td>' +
-                                    employe
-                                    .department
-                                    .name +
-                                    '</td>\
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        <td>' +
-                                    employe
-                                    .country
-                                    .name +
-                                    '</td>\
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        <td>' +
-                                    employe
-                                    .employe_type
-                                    .name +
-                                    '</td>\
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        <td>' +
-                                    employe
-                                    .phone +
-                                    '</td>\
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        <td>' +
-                                    employe
-                                    .dob +
-                                    '</td>\
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        <td>' +
-                                    employe
-                                    .join_date +
-                                    '</td>\
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        <td>' +
-                                    employe
-                                    .holiday_year +
-                                    '</td>\
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        <td>' +
-                                    employe
-                                    .salaray +
-                                    '</td>\
-                                    <td><a type="button" href="/employee/'+employe.id+'/edit" value="' +
-                                employe
-                                .id +
-                                '" class="btn btn-circle btn-success"><i class="fas fa-edit"></i></a> <a type="button" href="/employee/delete/'+employe.id+'" value="' +
-                                employe
-                                .id +
-                                '" class="btn btn-circle btn-danger "><i class="fas fa-trash"></i></a> </td>\
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    </tr> ';
-                            });
-                        } else {
-                            html +=
-                                '<tr>\
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    <td>No Employee Found !</td>\
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    </tr> ';
-                        }
-                        $('#tbody').html(html);
-                    }
-                });
-            });
-
-            //  filtering by salary
-            $('#holiday_year').on('keyup', function() {
-                holiday_year = $(this).val();
-                console.log(holiday_year);
-                $.ajax({
-                    type: "GET",
-                    url: "{{ route('employee.index') }}",
-                    data: {
-                        'holiday_year': holiday_year,
-                    },
-                    // dataType: "dataType",
-                    success: function(data) {
-                        var employees = data.employees;
-                        console.log(employees);
-                        var html = '';
-                        if (employees.length > 0) {
-                            employees.forEach(employe => {
-
-                                html +=
-                                    '<tr>\
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                <td></td>\
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                <td>' +
-                                    employe
-                                    .name +
-                                    '</td>\
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                <td>' +
-                                    employe
-                                    .department
-                                    .name +
-                                    '</td>\
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                <td>' +
-                                    employe
-                                    .country
-                                    .name +
-                                    '</td>\
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                <td>' +
-                                    employe
-                                    .employe_type
-                                    .name +
-                                    '</td>\
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                <td>' +
-                                    employe
-                                    .phone +
-                                    '</td>\
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                <td>' +
-                                    employe
-                                    .dob +
-                                    '</td>\
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                <td>' +
-                                    employe
-                                    .join_date +
-                                    '</td>\
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                <td>' +
-                                    employe
-                                    .holiday_year +
-                                    '</td>\
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                <td>' +
-                                    employe
-                                    .salaray +
-                                    '</td>\
-                                    <td><a type="button" href="/employee/'+employe.id+'/edit" value="' +
-                                employe
-                                .id +
-                                '" class="btn btn-circle btn-success"><i class="fas fa-edit"></i></a> <a type="button" href="/employee/delete/'+employe.id+'" value="' +
-                                employe
-                                .id +
-                                '" class="btn btn-circle btn-danger "><i class="fas fa-trash"></i></a> </td>\
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            </tr> ';
-                            });
-                        } else {
-                            html +=
-                                '<tr>\
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    <td>No Employee Found !</td>\
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    </tr> ';
-                        }
-                        $('#tbody').html(html);
-                    }
-                });
-            });
-
-            //  filtering by salary
-            $('#salary').on('keyup', function() {
-                salary = $(this).val();
-
-                $.ajax({
-                    type: "GET",
-                    url: "{{ route('employee.index') }}",
-                    data: {
-                        'salary': salary,
-                    },
-                    // dataType: "dataType",
-                    success: function(data) {
-                        var employees = data.employees;
-
-                        var html = '';
-                        if (employees.length > 0) {
-                            employees.forEach(employe => {
-
-                                html +=
-                                    '<tr>\
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        <td></td>\
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        <td>' +
-                                    employe
-                                    .name +
-                                    '</td>\
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        <td>' +
-                                    employe
-                                    .department
-                                    .name +
-                                    '</td>\
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        <td>' +
-                                    employe
-                                    .country
-                                    .name +
-                                    '</td>\
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        <td>' +
-                                    employe
-                                    .employe_type
-                                    .name +
-                                    '</td>\
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        <td>' +
-                                    employe
-                                    .phone +
-                                    '</td>\
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        <td>' +
-                                    employe
-                                    .dob +
-                                    '</td>\
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        <td>' +
-                                    employe
-                                    .join_date +
-                                    '</td>\
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        <td>' +
-                                    employe
-                                    .holiday_year +
-                                    '</td>\
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        <td>' +
-                                    employe
-                                    .salaray +
-                                    '</td>\
-                                    <td><a type="button" href="/employee/'+employe.id+'/edit" value="' +
-                                employe
-                                .id +
-                                '" class="btn btn-circle btn-success"><i class="fas fa-edit"></i></a> <a type="button" href="/employee/delete/'+employe.id+'" value="' +
-                                employe
-                                .id +
-                                '" class="btn btn-circle btn-danger "><i class="fas fa-trash"></i></a> </td>\
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    </tr> ';
-                            });
-                        } else {
-                            html +=
-                                '<tr>\
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    <td>No Employee Found !</td>\
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    </tr> ';
-                        }
-                        $('#tbody').html(html);
-                    }
-                });
-            });
-
-            // filter salary by range
-            $('#filter_by_salary').on('click', function(e) {
-                e.preventDefault();
-
-                from = $('#from').val();
-                to = $('#to').val();
-                console.log(from);
-                $.ajax({
-                    type: "GET",
-                    url: "{{ route('employee.index') }}",
-                    data: {
-                        'from': from,
-                        'to': to,
-                    },
-                    // dataType: "dataType",
-                    success: function(data) {
-                        var employees = data.employees;
-
-                        var html = '';
-                        if (employees.length > 0) {
-                            employees.forEach(employe => {
-
-                                html +=
-                                    '<tr>\
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        <td></td>\
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        <td>' +
-                                    employe
-                                    .name +
-                                    '</td>\
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        <td>' +
-                                    employe
-                                    .department
-                                    .name +
-                                    '</td>\
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        <td>' +
-                                    employe
-                                    .country
-                                    .name +
-                                    '</td>\
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        <td>' +
-                                    employe
-                                    .employe_type
-                                    .name +
-                                    '</td>\
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        <td>' +
-                                    employe
-                                    .phone +
-                                    '</td>\
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        <td>' +
-                                    employe
-                                    .dob +
-                                    '</td>\
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        <td>' +
-                                    employe
-                                    .join_date +
-                                    '</td>\
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        <td>' +
-                                    employe
-                                    .holiday_year +
-                                    '</td>\
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        <td>' +
-                                    employe
-                                    .salaray +
-                                    '</td>\
-                                    <td><a type="button" href="/employee/'+employe.id+'/edit" value="' +
-                                employe
-                                .id +
-                                '" class="btn btn-circle btn-success"><i class="fas fa-edit"></i></a> <a type="button" href="/employee/delete/'+employe.id+'" value="' +
-                                employe
-                                .id +
-                                '" class="btn btn-circle btn-danger "><i class="fas fa-trash"></i></a> </td>\
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    </tr> ';
-                            });
-                        } else {
-                            html +=
-                                '<tr>\
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    <td>No Employee Found !</td>\
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    </tr> ';
-                        }
-                        $('#tbody').html(html);
-                    }
-                });
-            });
-
-            // datatable
-            $('#dataTable').DataTable({
-                // dom: 'Bfrtip',
-                dom: "Blfrtip",
-
-                buttons: [{
-                        extend: 'pdfHtml5',
-                        text: '<button  class="px-3 btn btn-primary w-100 "><i class="mr-1 fa fa-file-pdf "></i> PDF</button>',
-
-                        title: 'All Employee List',
-                        exportOptions: {
-                            columns: ':visible:not(.not-export)'
-                        }
-
-                    },
-                    {
-                        text: '<button  class="px-3 btn btn-primary w-100 "><i class="mr-1 fa fa-copy"></i> Copy</button>',
-                        extend: 'copyHtml5',
-                        title: 'All Employee List',
-                        exportOptions: {
-                            columns: ':visible:not(.not-export)'
-                        }
-                    },
-                    {
-                        text: '<button  class="px-3 btn btn-primary w-100 "><i class="mr-1 fa fa-file-excel"></i> Excel</button>',
-                        extend: 'excelHtml5',
-                        title: 'All Employee List',
-                        exportOptions: {
-                            columns: ':visible:not(.not-export)'
-                        }
-                    },
-                    {
-                        extend: 'print',
-                        text: '<button  class="px-3 btn btn-primary w-100 "><i class="mr-1 fa fa-print"></i> Print</button>',
-
-                        pageSize: 'A4',
-                        title: 'All Employee List',
-                        exportOptions: {
-                            columns: ':visible:not(.not-export)'
-                        }
-
-                    },
-                ]
-            });
-
-
-        });
     </script>
+
 @endsection

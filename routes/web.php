@@ -1,7 +1,10 @@
 <?php
 
 use App\Http\Controllers\CountryController;
+use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\EmployeController;
+use App\Http\Controllers\EmployeTypeController;
+use App\Models\EmployeType;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -21,6 +24,10 @@ Route::get('/', function () {
 
 Route::resource('/employee', EmployeController::class);
 Route::resource('/country', CountryController::class);
+Route::resource('/department', DepartmentController::class);
+Route::resource('/employee_type', EmployeTypeController::class);
+
 Route::get('/employee/delete/{id}', [EmployeController::class, 'destroy']);
+
 
 require __DIR__.'/auth.php';

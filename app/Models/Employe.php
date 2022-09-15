@@ -55,9 +55,11 @@ class Employe extends Model
         $query->when($salary, function ($q) use ($salary) {
             return $q->where('salaray', $salary)->get();
         });
-        $query->when($from && $to, function ($q) use ($from, $to) {
-            return $q->whereBetween('salaray', [$from, $to])->get();
+
+        $query->when($from && $to,function($q) use($from,$to){
+            return $q->whereBetween('salaray',[$from,$to])->get();
         });
+
 
         $employees = $query->get();
 

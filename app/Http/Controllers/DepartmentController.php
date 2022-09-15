@@ -14,7 +14,10 @@ class DepartmentController extends Controller
      */
     public function index()
     {
-        //
+        $departments = Department::get();
+
+        return view('department.index', compact('departments'));
+
     }
 
     /**
@@ -24,7 +27,8 @@ class DepartmentController extends Controller
      */
     public function create()
     {
-        //
+        return view('department.create');
+
     }
 
     /**
@@ -35,18 +39,10 @@ class DepartmentController extends Controller
      */
     public function store(Request $request)
     {
-        //
-    }
+        Department::create($request->all());
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\Department  $department
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Department $department)
-    {
-        //
+        return to_route('department.index')->with('message', 'Department Created successfully');
+
     }
 
     /**
@@ -57,7 +53,8 @@ class DepartmentController extends Controller
      */
     public function edit(Department $department)
     {
-        //
+        return view('department.edit', compact('department'));
+
     }
 
     /**
@@ -69,7 +66,10 @@ class DepartmentController extends Controller
      */
     public function update(Request $request, Department $department)
     {
-        //
+        $department->update($request->all());
+
+        return to_route('department.index')->with('message', 'Department Updated successfully');
+
     }
 
     /**
@@ -80,6 +80,8 @@ class DepartmentController extends Controller
      */
     public function destroy(Department $department)
     {
-        //
+        $department->delete();
+
+        return to_route('department.index')->with('delete', 'Department Deleted successfully');
     }
 }

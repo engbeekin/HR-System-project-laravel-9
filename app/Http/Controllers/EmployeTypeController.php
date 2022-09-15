@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+
 use App\Models\EmployeType;
 use Illuminate\Http\Request;
 
@@ -14,7 +15,10 @@ class EmployeTypeController extends Controller
      */
     public function index()
     {
-        //
+        $employeeTypies = EmployeType::get();
+
+        return view('employeetype.index', compact('employeeTypies'));
+
     }
 
     /**
@@ -24,7 +28,8 @@ class EmployeTypeController extends Controller
      */
     public function create()
     {
-        //
+        return view('employeetype.create');
+
     }
 
     /**
@@ -35,18 +40,10 @@ class EmployeTypeController extends Controller
      */
     public function store(Request $request)
     {
-        //
-    }
+        EmployeType::create($request->all());
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\EmployeType  $employeType
-     * @return \Illuminate\Http\Response
-     */
-    public function show(EmployeType $employeType)
-    {
-        //
+        return to_route('employee_type.index')->with('message', 'Employee Type Created successfully');
+
     }
 
     /**
@@ -55,9 +52,11 @@ class EmployeTypeController extends Controller
      * @param  \App\Models\EmployeType  $employeType
      * @return \Illuminate\Http\Response
      */
-    public function edit(EmployeType $employeType)
+    public function edit( $id)
     {
-        //
+        $employeType=EmployeType::findOrFail($id);
+        return view('employeetype.edit', compact('employeType'));
+
     }
 
     /**
@@ -69,7 +68,10 @@ class EmployeTypeController extends Controller
      */
     public function update(Request $request, EmployeType $employeType)
     {
-        //
+        $employeType->update($request->all());
+
+        return to_route('employee_type.index')->with('message', 'Employe Type Updated successfully');
+
     }
 
     /**
@@ -78,8 +80,12 @@ class EmployeTypeController extends Controller
      * @param  \App\Models\EmployeType  $employeType
      * @return \Illuminate\Http\Response
      */
-    public function destroy(EmployeType $employeType)
+    public function destroy( $id)
     {
-        //
+        $employeType = EmployeType::findOrFail($id);
+
+        $employeType->delete();
+
+        return to_route('employee_type.index')->with('delete', 'Employe Type Deleted successfully');
     }
 }
